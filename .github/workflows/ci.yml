@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6]
+        python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run Main.py ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
@@ -27,7 +27,17 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
+    - name: Test with flake8
+      with:
+       python-version: '3.6'
+    - name: Run main.py with flake8
       run: |
-        main
+        flake8 main.py
+    - name: Run with doctest
+      with:
+       python-version: ${{ matrix.python-version }}
+    - name: Execute doctest
+      run: |
+        python3 -m doctest main.py
+
       
